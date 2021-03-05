@@ -109,7 +109,7 @@ int QuantidadeComponentesConexas( grafo* g ) {
     //       Basta contar a quantidade de vertices nesta situacao...
 	
 	for(int i = 0; i < g->V; i++){
-		if(i == s[i].pai){
+		if(i == Find_Set(s, i)){
 			nc++;
 		}
 	}
@@ -127,7 +127,37 @@ int MaiorComponenteConexa( grafo* g ) {
     //       componente conexo para descobrir qual eh de maior quantidade.
     //       Tente criar um vetor auxiliar (tamanho g->V), percorrer todos os vertices e
     //       incrementar o no representante (pai) para cada vertice. Assim, basta buscar a maior contagem.
-    return 0;
+	
+	if(g->V <= 0){
+		return 0;
+	}
+	
+	subset *s = Make_Subset(g->V);
+	  for(int i=0; i<g->E; i++) {
+        int rx = Find_Set(s, g->VetorDeArestas[i].origem);
+        int ry = Find_Set(s, g->VetorDeArestas[i].destino);
+        if (rx!=ry)
+        	Union(s, rx, ry);
+    }
+	
+	int max = 0;
+	int *vetor = (int *)malloc((g->V) * sizeof(int));
+	
+	for(int i = 0; i < g->V; i++){
+		int ind = Find_Set(s, i);
+		vetor[ind]++;
+	}
+	
+	for(int i = 0; i < g->V; i++){
+		if(max < vetor[i]){
+			max = vetor[i];
+		}
+	}
+	
+	free(vetor);
+	Destroy_Subset(s);
+	
+    return max;
 }
 
 int SomaPesoArestasDaArvoreGeradoraMinima( grafo* g ) {
