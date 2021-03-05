@@ -55,6 +55,7 @@ void Union(subset subconjuntos[], int x, int y) {
 	
 }
 
+
 bool Mesma_Componente(subset subconjuntos[], int u, int v){
 	if(Find_Set(subconjuntos, u) == Find_Set(subconjuntos, v) ){
 		return true;
@@ -72,21 +73,20 @@ bool TemCiclo( grafo* g ) {
     // IMPLEMENTAR !!!
     bool tem_ciclo = false;
     subset *s = Make_Subset(g->V);
+	
     // DICA: Faca um laco de 0 ate g->E unindo os vertices.
     //       Caso os verticies ja pertencerem ao memso componente conexo (usar Find_Set),
     //       significa que o grafo tem um ciclo.
 	
 	for(int i = 0; i < g->E; i++){
-		for(int j = i; j < g->E; j++){
-			if(Mesma_Componente(s, i, j) == true ){
-				tem_ciclo = true;
-				break;
-			}
-			else{
-				Union(s, i, j);
-			}
+		int x = g->VetorDeArestas[i].origem;
+		int y = g->VetorDeArestas[i].destino;
+		
+		if(Mesma_Componente(s, x, y)){
+			tem_ciclo = true;
 		}
 		
+		Union(s, x, y);
 	}
 	
     Destroy_Subset(s);
