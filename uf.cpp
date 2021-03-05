@@ -160,6 +160,16 @@ int MaiorComponenteConexa( grafo* g ) {
     return max;
 }
 
+int compara(const void *x, const void *y){
+	//compara arestas pelo peso
+	
+	Aresta *i = (Aresta*)x;
+	Aresta *j = (Aresta*)y;
+	
+	return i->peso > j->peso;
+	
+}
+
 int SomaPesoArestasDaArvoreGeradoraMinima( grafo* g ) {
     // IMPLEMENTAR !!!
     // IMPLEMENTAR !!!
@@ -167,5 +177,33 @@ int SomaPesoArestasDaArvoreGeradoraMinima( grafo* g ) {
     // DICA: Use o algoritmo de Kruskal (disponivel no slide):
     //       Ordene as arestas por peso e crie um contador que soma todos os pesos
     //       utilizados na formacao da Arvore Geradora Minima.
-    return 0;
+	
+	//Aresta *resultante = (Aresta *)malloc((g->V)*sizeof(Aresta));
+	Aresta resultante[g->V];	
+	qsort(g->VetorDeArestas, g->E, sizeof(g->VetorDeArestas[0]), compara); //ordena qsort por peso
+	
+	subset *s = Make_Subset(g->V);
+	
+	int x = 0, y = 0;
+	while(x < g->V - 1 && y < g->E){
+		Aresta prox = g->VetorDeArestas[y++];
+		
+		int a = Find_Set(s, prox.origem);
+		int b = Find_Set(s, prox.destino);
+		
+		if(a != b){
+			resultante[x++] = prox;
+			Union(s, a, b);
+		}
+		
+	}
+	
+	int count = 0;	
+	for(int i = 0; i < x; ++i){
+		count += resultante[i].peso;
+		
+	}
+	
+	Destroy_Subset(s);
+    return count;
 }
