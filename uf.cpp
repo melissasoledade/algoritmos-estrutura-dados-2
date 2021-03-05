@@ -107,6 +107,13 @@ int QuantidadeComponentesConexas( grafo* g ) {
 	int nc=0;
     // DICA: Quando o elemento i for o mesmo que o pai[i] (se representante), significa que representa um componente conexo.
     //       Basta contar a quantidade de vertices nesta situacao...
+	
+	for(int i = 0; i < g->V; i++){
+		if(i == s[i].pai){
+			nc++;
+		}
+	}
+	
     Destroy_Subset(s);
     return nc;
 }
