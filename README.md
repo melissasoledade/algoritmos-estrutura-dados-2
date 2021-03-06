@@ -1,2 +1,8 @@
 # algoritmos-estrutura-dados-2
-disciplina Algoritmos e Estrutura de Dados II da UFABC
+Disciplina Algoritmos e Estrutura de Dados II da UFABC
+
+Algoritmos:
+* Árvore AVL
+* Árvore Trie
+* Árvore B
+* Union Find
