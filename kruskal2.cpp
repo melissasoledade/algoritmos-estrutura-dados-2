@@ -21,9 +21,8 @@ struct subset{
 };typedef struct subset subset;
 
 
-// Creates a graph with V vertices and E edges
-Graph* createGraph(int V, int E)
-{
+// Cria grafo com V vértices e E arestas
+Graph* criaGrafo(int V, int E){
 	Graph* graph = (Graph*)malloc(sizeof(Graph));
 	graph->V = V;
 	graph->E = E;
@@ -130,7 +129,7 @@ int main()
 
 	int V = 4; // Number of vertices in graph
 	int E = 5; // Number of edges in graph
-	Graph* graph = createGraph(V, E);
+	Graph* graph = criaGrafo(V, E);
 
 	// add edge 0-1
 	graph->edge[0].src = 0;
