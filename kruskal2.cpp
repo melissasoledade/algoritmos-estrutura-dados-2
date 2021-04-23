@@ -4,9 +4,9 @@
 #include <string.h>
 
 struct Edge{
-	int src;
-	int dest;
-	int weight;
+	int u;
+	int v;
+	int peso;
 };typedef struct Edge Edge;
 
 struct Grafo{
@@ -70,18 +70,17 @@ void Union(subset subconjuntos[], int x, int y){
 	}	
 }
 
-// compara Edges pelo weight
+// compara Edges pelo peso
 int compara(const void* x, const void* y){	
 	Edge* i = (Edge*)x;
 	Edge* j = (Edge*)y;	
-	return i->weight > j->weight;	
+	return i->peso > j->peso;	
 }
 
-void Kruskal(Grafo* grafo)
-{
+void Kruskal(Grafo* grafo){
 	int V = grafo->V;
-	Edge result[V]; // Tnis will store the resultant MST
-	int e = 0; // An index variable, used for result[]
+	Edge resultado[V]; // Tnis will store the resultadoant MST
+	int e = 0; // An index variable, used for resultado[]
 	int i = 0; // An index variable, used for sorted edges
 
 	
@@ -98,62 +97,61 @@ void Kruskal(Grafo* grafo)
 	while (e < V - 1 && i < grafo->E)
 	{
 		
-		Edge next_edge = grafo->edge[i++];
+		Edge prox = grafo->edge[i++];
 
-		int x = Find_Set(subsets, next_edge.src);
-		int y = Find_Set(subsets, next_edge.dest);
+		int x = Find_Set(subsets, prox.u);
+		int y = Find_Set(subsets, prox.v);
 
 		
 		if (x != y) {
-			result[e++] = next_edge;
+			resultado[e++] = prox;
 			Union(subsets, x, y);
 		}
-		// Else discard the next_edge
+		
 	}
 
 	
 
-	int minimumCost = 0;
+	int custoMin = 0;
 	for (i = 0; i < e; ++i){
-		printf("%d - %d - %d\n", result[i].src, result[i].dest, result[i].weight);		
-		minimumCost = minimumCost + result[i].weight;
+		printf("%d - %d - %d\n", resultado[i].u, resultado[i].v, resultado[i].peso);		
+		custoMin = custoMin + resultado[i].peso;
 	}
 	
-	printf("Custo mínimo: %d\n", minimumCost);
+	printf("Custo mínimo: %d\n", custoMin);
 }
 
-// Driver code
-int main()
-{
 
-	int V = 4; // Number of vertices in grafo
-	int E = 5; // Number of edges in grafo
+int main(){
+
+	int V = 4; 
+	int E = 5; 
 	Grafo* grafo = criaGrafo(V, E);
 
 	// add edge 0-1
-	grafo->edge[0].src = 0;
-	grafo->edge[0].dest = 1;
-	grafo->edge[0].weight = 10;
+	grafo->edge[0].u = 0;
+	grafo->edge[0].v = 1;
+	grafo->edge[0].peso = 10;
 
 	// add edge 0-2
-	grafo->edge[1].src = 0;
-	grafo->edge[1].dest = 2;
-	grafo->edge[1].weight = 6;
+	grafo->edge[1].u = 0;
+	grafo->edge[1].v = 2;
+	grafo->edge[1].peso = 6;
 
 	// add edge 0-3
-	grafo->edge[2].src = 0;
-	grafo->edge[2].dest = 3;
-	grafo->edge[2].weight = 5;
+	grafo->edge[2].u = 0;
+	grafo->edge[2].v = 3;
+	grafo->edge[2].peso = 5;
 
 	// add edge 1-3
-	grafo->edge[3].src = 1;
-	grafo->edge[3].dest = 3;
-	grafo->edge[3].weight = 15;
+	grafo->edge[3].u = 1;
+	grafo->edge[3].v = 3;
+	grafo->edge[3].peso = 15;
 
 	// add edge 2-3
-	grafo->edge[4].src = 2;
-	grafo->edge[4].dest = 3;
-	grafo->edge[4].weight = 4;
+	grafo->edge[4].u = 2;
+	grafo->edge[4].v = 3;
+	grafo->edge[4].peso = 4;
 
 
 	// Function call
