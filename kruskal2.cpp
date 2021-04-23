@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//using namespace std;
-
 
 struct Edge{
 	int src;
@@ -18,7 +16,7 @@ struct Graph{
 };typedef struct Graph Graph;
 
 struct subset{
-	int parent;
+	int pai;
 	int rank;
 };typedef struct subset subset;
 
@@ -34,40 +32,52 @@ Graph* createGraph(int V, int E)
 	return graph;
 }
 
-int find(subset subsets[], int i)
-{
-
-	if (subsets[i].parent != i)
-		subsets[i].parent = find(subsets, subsets[i].parent);
-
-	return subsets[i].parent;
+void Make_Set(subset subconjuntos[], int i) {
+    subconjuntos[i].pai = i;
+    subconjuntos[i].rank = 0;
 }
 
-void Union(subset subsets[], int x, int y)
-{
-	int xroot = find(subsets, x);
-	int yroot = find(subsets, y);
+subset *Make_Subset(int tamanho) {
+    subset *subconjuntos = (subset*) malloc(tamanho * sizeof(subset));
+    for (int i=0; i<tamanho; i++) {
+        Make_Set(subconjuntos, i);
+    }
+    return subconjuntos;
+}
 
+// função de Find_Set set que procura o representante (pai) do elemento i com compressao de caminho.
+int Find_Set(subset subconjuntos[], int i){
 
-	if (subsets[xroot].rank < subsets[yroot].rank)
-		subsets[xroot].parent = yroot;
-	else if (subsets[xroot].rank > subsets[yroot].rank)
-		subsets[yroot].parent = xroot;
+	if (i != subconjuntos[i].pai){
+		subconjuntos[i].pai = Find_Set(subconjuntos, subconjuntos[i].pai);
+	}	
 
-	else {
-		subsets[yroot].parent = xroot;
-		subsets[xroot].rank++;
+	return subconjuntos[i].pai;
+}
+
+// função de union que junta os conjuntos de x e y com uniao ponderada.
+void Union(subset subconjuntos[], int x, int y){
+	x = Find_Set(subconjuntos, x);
+	y = Find_Set(subconjuntos, y);	
+	
+	if(subconjuntos[x].rank > subconjuntos[y].rank){
+		subconjuntos[y].pai = x;
 	}
+	else{
+		subconjuntos[x].pai = y;		
+		if(subconjuntos[x].rank == subconjuntos[y].rank){
+			subconjuntos[y].rank++;
+		}		
+	}	
 }
 
 
-int myComp(const void* a, const void* b)
-{
-	Edge* a1 = (Edge*)a;
-	Edge* b1 = (Edge*)b;
-	return a1->weight > b1->weight;
+// compara Edges pelo weight
+int compara(const void* x, const void* y){	
+	Edge* i = (Edge*)x;
+	Edge* j = (Edge*)y;	
+	return i->weight > j->weight;	
 }
-
 
 void KruskalMST(Graph* graph)
 {
@@ -77,13 +87,12 @@ void KruskalMST(Graph* graph)
 	int i = 0; // An index variable, used for sorted edges
 
 	
-	qsort(graph->edge, graph->E, sizeof(graph->edge[0]), myComp);
-
-	subset* subsets = (subset*)malloc(V * sizeof(subset));
+	qsort(graph->edge, graph->E, sizeof(graph->edge[0]), compara);
+	subset* subsets = Make_Subset(V);
 
 	for (int v = 0; v < V; ++v)
 	{
-		subsets[v].parent = v;
+		subsets[v].pai = v;
 		subsets[v].rank = 0;
 	}
 
@@ -93,8 +102,8 @@ void KruskalMST(Graph* graph)
 		
 		Edge next_edge = graph->edge[i++];
 
-		int x = find(subsets, next_edge.src);
-		int y = find(subsets, next_edge.dest);
+		int x = Find_Set(subsets, next_edge.src);
+		int y = Find_Set(subsets, next_edge.dest);
 
 		
 		if (x != y) {
