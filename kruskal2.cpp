@@ -2,13 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-using namespace std;
+//using namespace std;
 
-
-/*class Edge {
-public:
-	int src, dest, weight;
-};*/
 
 struct Edge{
 	int src;
@@ -16,19 +11,17 @@ struct Edge{
 	int weight;
 };typedef struct Edge Edge;
 
-/*class Graph {
-public:
-	
-	
-	int V, E;
-	Edge* edge;
-};*/
-
 struct Graph{
 	int V;
 	int E;
 	Edge * edge;
 };typedef struct Graph Graph;
+
+struct subset{
+	int parent;
+	int rank;
+};typedef struct subset subset;
+
 
 // Creates a graph with V vertices and E edges
 Graph* createGraph(int V, int E)
@@ -40,19 +33,6 @@ Graph* createGraph(int V, int E)
 
 	return graph;
 }
-
-// A structure to represent a subset for union-find
-/*class subset {
-public:
-	int parent;
-	int rank;
-};*/
-
-struct subset{
-	int parent;
-	int rank;
-};typedef struct subset subset;
-
 
 int find(subset subsets[], int i)
 {
@@ -125,31 +105,20 @@ void KruskalMST(Graph* graph)
 	}
 
 	
-	cout << "Following are the edges in the constructed "
-			"MST\n";
+
 	int minimumCost = 0;
-	for (i = 0; i < e; ++i)
-	{
-		cout << result[i].src << " -- " << result[i].dest
-			<< " == " << result[i].weight << endl;
+	for (i = 0; i < e; ++i){
+		printf("%d - %d - %d\n", result[i].src, result[i].dest, result[i].weight);		
 		minimumCost = minimumCost + result[i].weight;
 	}
-	// return;
-	cout << "Minimum Cost Spanning Tree: " << minimumCost
-		<< endl;
+	
+	printf("Custo mínimo: %d\n", minimumCost);
 }
 
 // Driver code
 int main()
 {
-	/* Let us create following weighted graph
-			10
-		0--------1
-		| \ |
-	6| 5\ |15
-		| \ |
-		2--------3
-			4 */
+
 	int V = 4; // Number of vertices in graph
 	int E = 5; // Number of edges in graph
 	Graph* graph = createGraph(V, E);
