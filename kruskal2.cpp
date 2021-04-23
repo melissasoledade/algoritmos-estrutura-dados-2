@@ -24,6 +24,68 @@ struct subset{
 	int rank;
 };typedef struct subset subset;
 
+struct enc{
+	int ind;
+	char str[256];
+	
+}; typedef struct enc enc;
+
+int procuraElementoEnc(char s[], enc *dict){
+	for(int i = 0; i < 256; i++){
+		if(strcmp(dict[i].str, s) == 0){ // se achou s em dict
+			return i;
+		}
+	}	
+	return -1;	
+}
+
+// LZW Compressão - Encode
+int * encoding(const char *s){
+	enc *dict = (enc*)malloc(256*sizeof(enc));	
+	char p[256] = "", c[256] = "";
+	int code = 256, indOutput = 0, procura_p, procura_p_c;
+	int *output = (int*)malloc(256*sizeof(int));
+	
+	for(int i = 0; i <= 255; i++){
+		char ch[256] = ""; 
+		strncat(ch, char(i), 1);
+		//ch = strcat(ch, char(i));
+		dict[i].ind = i;
+		dict[i].str = ch;		
+	}
+	
+	printf("String\tOutput_Code\tAddition\n");
+	
+	for (int i = 0; i < strlen(s); i++) {
+		if (i != strlen(s) - 1){
+			c = strcat(c, s[i + 1]);
+		}
+		
+		procura_p_c = procuraElementoEnc(strcat(p+c), dict);
+		if(procura_p_c != -1){
+			p = strcat(p,c);
+		}			
+		
+		else {
+			//printf("%s\t\t %d\t\t %s\t\t %d\t\t", p, procura, p+c, code);
+			procura_p = procuraElementoEnc(p, dict);
+			procura_p_c = procuraElementoEnc(p, dict);
+			
+			output[indOutput] = dict[procura_p].ind;			
+			dict[procura_p_c].ind = code;
+			code++;
+			indOutput++;
+			p = c;
+		}
+		c = "";
+	}
+	//cout << p << "\t" << table[p] << endl;
+	//output_code.push_back(table[p]);
+		
+	
+	return output;
+			
+}
 
 // Cria grafo com V vértices e E arestas
 Grafo* criaGrafo(int V, int E){	
@@ -141,7 +203,11 @@ int main(){
 	adicionaArestaGrafo(grafo, 4, 2, 3, 3.72, "III", "JJJ", 11198111, "teste;testea;testeb");
 
 	Kruskal(grafo);
-
+	const char *s = "WYS*WYGWYS*WYSWYSG";
+	int *e = encoding(s);
+	
+	
+	free(grafo);
 	return 0;
 }
 
