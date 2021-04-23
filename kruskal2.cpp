@@ -6,7 +6,11 @@
 struct Aresta{
 	int u; //fonte
 	int v; //destino
-	float peso; //peso -> custo gasolina + pedágio
+	float peso; //peso -> custo gasolina + pedágio	
+	const char *nomeEmp;
+    const char *enderecoEmp;
+	unsigned long int CNPJ;
+	const char *produtos;
 };typedef struct Aresta Aresta;
 
 struct Grafo{
@@ -29,6 +33,17 @@ Grafo* criaGrafo(int V, int E){
 	grafo->E = E;
 
 	return grafo;
+}
+
+// Adiciona dados ao grafo
+void adicionaArestaGrafo(Grafo *Grafo, int ind, int u, int v, float peso, const char *nomeEmp, const char *enderecoEmp, unsigned long int CNPJ, const char *produtos){
+	Grafo->aresta[ind].u = u;
+	Grafo->aresta[ind].v = v;
+	Grafo->aresta[ind].peso = peso;
+	Grafo->aresta[ind].nomeEmp = nomeEmp;
+	Grafo->aresta[ind].enderecoEmp = enderecoEmp;
+	Grafo->aresta[ind].CNPJ = CNPJ;
+	Grafo->aresta[ind].produtos = produtos;	
 }
 
 void Make_Set(subset subconjuntos[], int i) {
@@ -77,6 +92,7 @@ int compara(const void* x, const void* y){
 	return i->peso > j->peso;	
 }
 
+// Algoritmo de Kruskal. Encontra a árvore geradora mínima em um grafo, resultando em todos os pontos (vértices) que devem ser percorridos e o peso total do caminho
 void Kruskal(Grafo* grafo){
 	int V = grafo->V, e = 0, i = 0;
 	float custoMin = 0.00;
@@ -98,46 +114,31 @@ void Kruskal(Grafo* grafo){
 	}	
 	
 	for (i = 0; i < e; ++i){
-		printf("Fonte: %d - Destino: %d - Peso: %.2f\n", resultado[i].u, resultado[i].v, resultado[i].peso);		
+		printf("\n-----------------------------------------------------------------------------------------------------------\n");
+		printf("Fonte: %d - Destino: %d - Peso: %.2f\n", resultado[i].u, resultado[i].v, resultado[i].peso);
+		printf("Nome empresa: %s - CNPJ: %lu - Endereço: %s\n", resultado[i].nomeEmp, resultado[i].CNPJ, resultado[i].enderecoEmp);	
+		printf("Produtos: %s\n", resultado[i].produtos);
+		printf("\n-----------------------------------------------------------------------------------------------------------\n");
 		custoMin = custoMin + resultado[i].peso;
 	}
 	
 	printf("Custo mínimo: %.2f\n", custoMin);
+	printf("\n-----------------------------------------------------------------------------------------------------------\n");
 }
 
 
 int main(){
-
 	int V = 4; 
 	int E = 5; 
 	Grafo* grafo = criaGrafo(V, E);
+	
 
-	// add aresta 0-1
-	grafo->aresta[0].u = 0;
-	grafo->aresta[0].v = 1;
-	grafo->aresta[0].peso = 10;
-
-	// add aresta 0-2
-	grafo->aresta[1].u = 0;
-	grafo->aresta[1].v = 2;
-	grafo->aresta[1].peso = 6;
-
-	// add aresta 0-3
-	grafo->aresta[2].u = 0;
-	grafo->aresta[2].v = 3;
-	grafo->aresta[2].peso = 5;
-
-	// add aresta 1-3
-	grafo->aresta[3].u = 1;
-	grafo->aresta[3].v = 3;
-	grafo->aresta[3].peso = 15;
-
-	// add aresta 2-3
-	grafo->aresta[4].u = 2;
-	grafo->aresta[4].v = 3;
-	grafo->aresta[4].peso = 4;
-
-
+	// Teste input no grafo e custo mínimo
+	adicionaArestaGrafo(grafo, 0, 0, 1, 11.0, "AAA", "NBB", 9999999, "teste;teste;teste");
+	adicionaArestaGrafo(grafo, 1, 0, 2, 6.65, "CCC", "DDD", 111211111, "teste;testea;testeb");
+	adicionaArestaGrafo(grafo, 2, 0, 3, 5.92, "EEE", "FFF", 11141111, "teste;testea;testeb");
+	adicionaArestaGrafo(grafo, 3, 1, 3, 15.89, "GGG", "HHH", 112311111, "teste;testea;testeb");
+	adicionaArestaGrafo(grafo, 4, 2, 3, 3.72, "III", "JJJ", 11198111, "teste;testea;testeb");
 
 	Kruskal(grafo);
 
