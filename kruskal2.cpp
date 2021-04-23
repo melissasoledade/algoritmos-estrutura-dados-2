@@ -9,11 +9,11 @@ struct Edge{
 	int weight;
 };typedef struct Edge Edge;
 
-struct Graph{
+struct Grafo{
 	int V;
 	int E;
 	Edge * edge;
-};typedef struct Graph Graph;
+};typedef struct Grafo Grafo;
 
 struct subset{
 	int pai;
@@ -22,13 +22,13 @@ struct subset{
 
 
 // Cria grafo com V vértices e E arestas
-Graph* criaGrafo(int V, int E){
-	Graph* graph = (Graph*)malloc(sizeof(Graph));
-	graph->V = V;
-	graph->E = E;
-	graph->edge = (Edge*)malloc(E * sizeof(Edge));
+Grafo* criaGrafo(int V, int E){
+	Grafo* grafo = (Grafo*)malloc(sizeof(Grafo));
+	grafo->V = V;
+	grafo->E = E;
+	grafo->edge = (Edge*)malloc(E * sizeof(Edge));
 
-	return graph;
+	return grafo;
 }
 
 void Make_Set(subset subconjuntos[], int i) {
@@ -70,7 +70,6 @@ void Union(subset subconjuntos[], int x, int y){
 	}	
 }
 
-
 // compara Edges pelo weight
 int compara(const void* x, const void* y){	
 	Edge* i = (Edge*)x;
@@ -78,15 +77,15 @@ int compara(const void* x, const void* y){
 	return i->weight > j->weight;	
 }
 
-void KruskalMST(Graph* graph)
+void Kruskal(Grafo* grafo)
 {
-	int V = graph->V;
+	int V = grafo->V;
 	Edge result[V]; // Tnis will store the resultant MST
 	int e = 0; // An index variable, used for result[]
 	int i = 0; // An index variable, used for sorted edges
 
 	
-	qsort(graph->edge, graph->E, sizeof(graph->edge[0]), compara);
+	qsort(grafo->edge, grafo->E, sizeof(grafo->edge[0]), compara);
 	subset* subsets = Make_Subset(V);
 
 	for (int v = 0; v < V; ++v)
@@ -96,10 +95,10 @@ void KruskalMST(Graph* graph)
 	}
 
 	
-	while (e < V - 1 && i < graph->E)
+	while (e < V - 1 && i < grafo->E)
 	{
 		
-		Edge next_edge = graph->edge[i++];
+		Edge next_edge = grafo->edge[i++];
 
 		int x = Find_Set(subsets, next_edge.src);
 		int y = Find_Set(subsets, next_edge.dest);
@@ -127,38 +126,38 @@ void KruskalMST(Graph* graph)
 int main()
 {
 
-	int V = 4; // Number of vertices in graph
-	int E = 5; // Number of edges in graph
-	Graph* graph = criaGrafo(V, E);
+	int V = 4; // Number of vertices in grafo
+	int E = 5; // Number of edges in grafo
+	Grafo* grafo = criaGrafo(V, E);
 
 	// add edge 0-1
-	graph->edge[0].src = 0;
-	graph->edge[0].dest = 1;
-	graph->edge[0].weight = 10;
+	grafo->edge[0].src = 0;
+	grafo->edge[0].dest = 1;
+	grafo->edge[0].weight = 10;
 
 	// add edge 0-2
-	graph->edge[1].src = 0;
-	graph->edge[1].dest = 2;
-	graph->edge[1].weight = 6;
+	grafo->edge[1].src = 0;
+	grafo->edge[1].dest = 2;
+	grafo->edge[1].weight = 6;
 
 	// add edge 0-3
-	graph->edge[2].src = 0;
-	graph->edge[2].dest = 3;
-	graph->edge[2].weight = 5;
+	grafo->edge[2].src = 0;
+	grafo->edge[2].dest = 3;
+	grafo->edge[2].weight = 5;
 
 	// add edge 1-3
-	graph->edge[3].src = 1;
-	graph->edge[3].dest = 3;
-	graph->edge[3].weight = 15;
+	grafo->edge[3].src = 1;
+	grafo->edge[3].dest = 3;
+	grafo->edge[3].weight = 15;
 
 	// add edge 2-3
-	graph->edge[4].src = 2;
-	graph->edge[4].dest = 3;
-	graph->edge[4].weight = 4;
+	grafo->edge[4].src = 2;
+	grafo->edge[4].dest = 3;
+	grafo->edge[4].weight = 4;
 
 
 	// Function call
-	KruskalMST(graph);
+	Kruskal(grafo);
 
 	return 0;
 }
