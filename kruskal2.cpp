@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,12 +25,12 @@ struct subset{
 };typedef struct subset subset;
 
 struct enc{
-	int ind;
+	//int ind;
 	char str[256];
 	
 }; typedef struct enc enc;
 
-int procuraElementoEnc(char s[], enc *dict){
+int procuraElementoEnc(char s[256], enc *dict){
 	for(int i = 0; i < 256; i++){
 		if(strcmp(dict[i].str, s) == 0){ // se achou s em dict
 			return i;
@@ -39,49 +39,61 @@ int procuraElementoEnc(char s[], enc *dict){
 	return -1;	
 }
 
+void mudaCode(char s[256], int code, enc *dict){
+	int ind = procuraElementoEnc(s, dict);
+	strcpy(dict[code].str,  s);
+	
+}
+
 // LZW Compressão - Encode
-int * encoding(const char *s){
-	enc *dict = (enc*)malloc(256*sizeof(enc));	
-	char p[256] = "", c[256] = "";
-	int code = 256, indOutput = 0, procura_p, procura_p_c;
+int * encoding(char s[256]){
+	enc *dict = (enc*)malloc(256 * sizeof(enc));		
+	int code = 256;
+	int indOutput = 0;
 	int *output = (int*)malloc(256*sizeof(int));
+	char ch[256] = "";
+	char p[256] = "";
+	char c[256] = "";
+	char pc[550] = "";
+	char aux[550];
 	
-	for(int i = 0; i <= 255; i++){
-		char ch[256] = ""; 
-		strncat(ch, char(i), 1);
-		//ch = strcat(ch, char(i));
-		dict[i].ind = i;
-		dict[i].str = ch;		
-	}
+	strncat(p, &s[0], 1);
 	
-	printf("String\tOutput_Code\tAddition\n");
+	for(int i = 0; i <= 255; i ++){
+		ch[0] = '\0';
+		char aux = i + '0';
+		strncat(ch, &aux , 1);		
+		strcat(dict[i].str, ch);		
+	}	
 	
-	for (int i = 0; i < strlen(s); i++) {
-		if (i != strlen(s) - 1){
-			c = strcat(c, s[i + 1]);
+	for(int i = 0; i < strlen(s); i++){
+		if(i != strlen(s)-1){
+			//c += s[i+1];
+			strncat(c, &s[i+1], 1);
 		}
 		
-		procura_p_c = procuraElementoEnc(strcat(p+c), dict);
-		if(procura_p_c != -1){
-			p = strcat(p,c);
-		}			
+		strcat(pc, p);
+		strcat(pc, c);
+		int procura = procuraElementoEnc(pc, dict);
 		
-		else {
-			//printf("%s\t\t %d\t\t %s\t\t %d\t\t", p, procura, p+c, code);
-			procura_p = procuraElementoEnc(p, dict);
-			procura_p_c = procuraElementoEnc(p, dict);
-			
-			output[indOutput] = dict[procura_p].ind;			
-			dict[procura_p_c].ind = code;
-			code++;
+		if(procura != -1){
+			p[0] = '\0';
+			strcat(p, pc);			
+		}
+		
+		else{
+			int procura_p = procuraElementoEnc(p, dict);
+			output[indOutput] = procura_p;
+			printf("%d ", procura_p);
 			indOutput++;
-			p = c;
+			strcpy(dict[code].str, pc);
+			code++;
+			strcpy(p, "");
+			strcpy(p, c);
 		}
-		c = "";
-	}
-	//cout << p << "\t" << table[p] << endl;
-	//output_code.push_back(table[p]);
 		
+		strcpy(c, "");		
+	}		
 	
 	return output;
 			
@@ -203,11 +215,15 @@ int main(){
 	adicionaArestaGrafo(grafo, 4, 2, 3, 3.72, "III", "JJJ", 11198111, "teste;testea;testeb");
 
 	Kruskal(grafo);
-	const char *s = "WYS*WYGWYS*WYSWYSG";
+	char s[256] = "WYS*WYGWYS*WYSWYSG";
 	int *e = encoding(s);
 	
+	for(int i = 0; i < 18; i++){
+		printf("%d ", e[i]);
+	}
 	
-	free(grafo);
+	
+	//free(grafo);
 	return 0;
 }
 
