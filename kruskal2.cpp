@@ -1,4 +1,3 @@
-//#include <bits/stdc++.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,9 +5,9 @@
 struct Aresta{
 	int u; //fonte
 	int v; //destino
-	float peso; //peso -> custo gasolina + pedágio	
+	float peso; //peso 
 	const char *nomeEmp;
-    const char *enderecoEmp;
+    //const char *enderecoEmp;
 	unsigned long int CNPJ;
 	const char *produtos;
 };typedef struct Aresta Aresta;
@@ -39,12 +38,6 @@ int procuraElementoEnc(char s[256], enc *dict){
 	return -1;	
 }
 
-void mudaCode(char s[256], int code, enc *dict){
-	int ind = procuraElementoEnc(s, dict);
-	strcpy(dict[code].str,  s);
-	
-}
-
 // LZW Compressão - Encode
 int * encoding(char s[256]){
 	enc *dict = (enc*)malloc(256 * sizeof(enc));		
@@ -55,7 +48,7 @@ int * encoding(char s[256]){
 	char p[256] = "";
 	char c[256] = "";
 	char pc[550] = "";
-	char aux[550];
+	char aux[550] = "";
 	
 	strncat(p, &s[0], 1);
 	
@@ -67,8 +60,7 @@ int * encoding(char s[256]){
 	}	
 	
 	for(int i = 0; i < strlen(s); i++){
-		if(i != strlen(s)-1){
-			//c += s[i+1];
+		if(i != strlen(s)-1){			
 			strncat(c, &s[i+1], 1);
 		}
 		
@@ -83,20 +75,17 @@ int * encoding(char s[256]){
 		
 		else{
 			int procura_p = procuraElementoEnc(p, dict);
-			output[indOutput] = procura_p;
-			printf("%d ", procura_p);
-			indOutput++;
+			output[indOutput] = procura_p;			
+			indOutput++;			
 			strcpy(dict[code].str, pc);
 			code++;
-			strcpy(p, "");
+			p[0] = '\0';
 			strcpy(p, c);
-		}
-		
-		strcpy(c, "");		
-	}		
+		}		
+		c[0] = '\0';		
+	}	
 	
-	return output;
-			
+	return output;			
 }
 
 // Cria grafo com V vértices e E arestas
@@ -109,13 +98,18 @@ Grafo* criaGrafo(int V, int E){
 	return grafo;
 }
 
+void destruirGrafo(Grafo *g) {
+    free(g->aresta);
+    free(g);
+}
+
 // Adiciona dados ao grafo
-void adicionaArestaGrafo(Grafo *Grafo, int ind, int u, int v, float peso, const char *nomeEmp, const char *enderecoEmp, unsigned long int CNPJ, const char *produtos){
+void adicionaArestaGrafo(Grafo *Grafo, int ind, int u, int v, float peso, const char *nomeEmp,  unsigned long int CNPJ, const char *produtos){
 	Grafo->aresta[ind].u = u;
 	Grafo->aresta[ind].v = v;
 	Grafo->aresta[ind].peso = peso;
 	Grafo->aresta[ind].nomeEmp = nomeEmp;
-	Grafo->aresta[ind].enderecoEmp = enderecoEmp;
+	//Grafo->aresta[ind].enderecoEmp = enderecoEmp;
 	Grafo->aresta[ind].CNPJ = CNPJ;
 	Grafo->aresta[ind].produtos = produtos;	
 }
@@ -131,6 +125,10 @@ subset *Make_Subset(int tamanho) {
         Make_Set(subconjuntos, i);
     }
     return subconjuntos;
+}
+
+void Destroy_Subset(subset *s) {
+    free(s);
 }
 
 // função de Find_Set set que procura o representante (pai) do elemento i com compressao de caminho.
@@ -174,8 +172,7 @@ void Kruskal(Grafo* grafo){
 	qsort(grafo->aresta, grafo->E, sizeof(grafo->aresta[0]), compara);
 	subset* subsets = Make_Subset(V);
 		
-	while (e < V - 1 && i < grafo->E){
-		
+	while (e < V - 1 && i < grafo->E){		
 		Aresta prox = grafo->aresta[i++];
 		int x = Find_Set(subsets, prox.u);
 		int y = Find_Set(subsets, prox.v);
@@ -190,7 +187,7 @@ void Kruskal(Grafo* grafo){
 	for (i = 0; i < e; ++i){
 		printf("\n-----------------------------------------------------------------------------------------------------------\n");
 		printf("Fonte: %d - Destino: %d - Peso: %.2f\n", resultado[i].u, resultado[i].v, resultado[i].peso);
-		printf("Nome empresa: %s - CNPJ: %lu - Endereço: %s\n", resultado[i].nomeEmp, resultado[i].CNPJ, resultado[i].enderecoEmp);	
+		printf("Nome empresa: %s - CNPJ: %lu\n", resultado[i].nomeEmp, resultado[i].CNPJ);	
 		printf("Produtos: %s\n", resultado[i].produtos);
 		printf("\n-----------------------------------------------------------------------------------------------------------\n");
 		custoMin = custoMin + resultado[i].peso;
@@ -198,6 +195,8 @@ void Kruskal(Grafo* grafo){
 	
 	printf("Custo mínimo: %.2f\n", custoMin);
 	printf("\n-----------------------------------------------------------------------------------------------------------\n");
+	
+	Destroy_Subset(subsets);
 }
 
 
@@ -208,22 +207,23 @@ int main(){
 	
 
 	// Teste input no grafo e custo mínimo
-	adicionaArestaGrafo(grafo, 0, 0, 1, 11.0, "AAA", "NBB", 9999999, "teste;teste;teste");
-	adicionaArestaGrafo(grafo, 1, 0, 2, 6.65, "CCC", "DDD", 111211111, "teste;testea;testeb");
-	adicionaArestaGrafo(grafo, 2, 0, 3, 5.92, "EEE", "FFF", 11141111, "teste;testea;testeb");
-	adicionaArestaGrafo(grafo, 3, 1, 3, 15.89, "GGG", "HHH", 112311111, "teste;testea;testeb");
-	adicionaArestaGrafo(grafo, 4, 2, 3, 3.72, "III", "JJJ", 11198111, "teste;testea;testeb");
+	adicionaArestaGrafo(grafo, 0, 0, 1, 11.0, "AAA",  9999999, "teste;teste;teste");
+	adicionaArestaGrafo(grafo, 1, 0, 2, 6.65, "CCC",  111211111, "teste;testea;testeb");
+	adicionaArestaGrafo(grafo, 2, 0, 3, 5.92, "EEE",  11141111, "teste;testea;testeb");
+	adicionaArestaGrafo(grafo, 3, 1, 3, 15.89, "GGG",  112311111, "teste;testea;testeb");
+	adicionaArestaGrafo(grafo, 4, 2, 3, 3.72, "III",  11198111, "teste;testea;testeb");
 
-	Kruskal(grafo);
-	char s[256] = "WYS*WYGWYS*WYSWYSG";
-	int *e = encoding(s);
+	Kruskal(grafo);	
+	int *e = encoding((char*)grafo->aresta[0].produtos);
 	
-	for(int i = 0; i < 18; i++){
+	printf("\n------------------------------------------------- Encoding ------------------------------------------------- \n");
+	printf("Índice: %d\n", 0);
+	for(int i = 0; i < strlen(grafo->aresta[0].produtos); i++){
 		printf("%d ", e[i]);
 	}
 	
+	destruirGrafo(grafo);
 	
-	//free(grafo);
 	return 0;
 }
 
